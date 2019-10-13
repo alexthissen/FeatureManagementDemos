@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  leaderboardwebapi:
+    image: ${DOCKER_REGISTRY-}leaderboardwebapi
+    build:
+      context: .
+      dockerfile: LeaderboardWebApi/Dockerfile
+
+  retrogamingwebapp:
+    image: ${DOCKER_REGISTRY-}retrogamingwebapp
+    build:
+      context: .
+      dockerfile: RetroGamingWebApp/Dockerfile
+    depends_on:
+      - "leaderboardwebapi"
+
