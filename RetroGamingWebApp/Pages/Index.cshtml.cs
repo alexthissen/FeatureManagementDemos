@@ -39,9 +39,9 @@ namespace RetroGamingWebApp.Pages
                 //ILeaderboardClient proxy = RestService.For<ILeaderboardClient>(options.Value.BaseUrl);
                 if (featureManager.IsEnabled(nameof(AppFeatureFlags.LeaderboardListLimit)))
                 {
-                    int limit = 0;
-                    Int32.TryParse(Request.Query["limit"], out limit);
-                    Scores = await proxy.GetHighScores(10).ConfigureAwait(false);
+                    int limit;
+                    Scores = await proxy.GetHighScores(Int32.TryParse(Request.Query["limit"], out limit) ? limit : 5)
+                        .ConfigureAwait(false);
                 }
                 else
                 {

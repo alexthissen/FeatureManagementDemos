@@ -29,9 +29,10 @@ namespace RetroGamingWebApp
                         {
                             options.Connect(configuration["ConnectionStrings:AppConfig"]);
                             options.Use(KeyFilter.Any);
-                            options.UseFeatureFlags(options => { 
-                                options.Label = ctx.HostingEnvironment.EnvironmentName; 
-                            });
+                            options.UseFeatureFlags();
+                            //options.UseFeatureFlags(options => { 
+                            //    options.Label = ctx.HostingEnvironment.EnvironmentName; 
+                            //});
                         });
                     }
                 })

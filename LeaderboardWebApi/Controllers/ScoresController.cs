@@ -6,12 +6,16 @@ using LeaderboardWebApi.Infrastructure;
 using LeaderboardWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NSwag.Annotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LeaderboardWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Produces("application/xml", "application/json")]
+    [OpenApiTag("Scores", Description = "Scores API")]
     public class ScoresController : Controller
     {
         private readonly LeaderboardContext context;

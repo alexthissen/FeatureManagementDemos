@@ -11,6 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaderboardWebApi.Integrati
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{EC06D7A8-72B3-42B0-94F0-40677A8BF296}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{5E8F3560-5239-4E7D-AD92-798E72853816}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes\dashboard-admin.yaml = Kubernetes\dashboard-admin.yaml
+		Kubernetes\gamingwebapp.k8s-dep.yaml = Kubernetes\gamingwebapp.k8s-dep.yaml
+		Kubernetes\gamingwebapp.secret.yaml = Kubernetes\gamingwebapp.secret.yaml
+		Kubernetes\namespace.k8s-dep.yaml = Kubernetes\namespace.k8s-dep.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

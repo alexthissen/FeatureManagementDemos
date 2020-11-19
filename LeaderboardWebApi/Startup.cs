@@ -21,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.FeatureFilters;
+using Newtonsoft.Json;
 using NSwag.AspNetCore;
 
 namespace LeaderboardWebApi
@@ -63,7 +64,9 @@ namespace LeaderboardWebApi
             services.AddControllers(options => {
                     //options.Filters.AddForFeature<ThirdPartyActionFilter>(nameof(ApiFeatureFlags.EnhancedPipeline))
                 })
-                .AddNewtonsoftJson()
+                .AddNewtonsoftJson(setup => {
+                    setup.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                })
                 .AddControllersAsServices(); // For resolving controllers as services via DI
         }
 

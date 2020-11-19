@@ -51,22 +51,27 @@ namespace LeaderboardWebApi.Controllers
         {
             logger?.LogInformation("Retrieving score list with a limit of {SearchLimit}.", limit);
 
+            var scores = context.Scores
+                .Select(score => new HighScore()
+                {
+                    Game = score.Game,
+                    Points = score.Points,
+                    Nickname = score.Gamer.Nickname
+                });
+
             if (featureManager.IsEnabled(nameof(ApiFeatureFlags.LeaderboardListLimit)))
             {
+                int searchLimit = limit;
+
                 // This is a demo bug, supposedly "hard" to find
                 do
                 {
-                    limit--;
+                    searchLimit--;
                 }
-                while (limit != 0);
+                while (searchLimit != 0);
+ 
+                scores = scores.Take(limit);
             }
-
-            var scores = context.Scores
-                .Select(score => new HighScore() { 
-                    Game = score.Game, 
-                    Points = score.Points, 
-                    Nickname = score.Gamer.Nickname 
-                });
 
             return Ok(await scores.ToListAsync().ConfigureAwait(false));
         }
