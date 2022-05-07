@@ -1,9 +1,19 @@
 ﻿@page
 @using RetroGamingWebApp.Proxy
 @model IndexModel
+@addTagHelper *, Microsoft.FeatureManagement.AspNetCore
 @inject ILeaderboardClient proxy
 @{
     ViewData["Title"] = "Home page";
+}
+@inject Microsoft.FeatureManagement.IFeatureManagerSnapshot featureManager
+
+
+@if (await featureManager.IsEnabledAsync("LeaderboardListLimit"))
+{
+<h2>
+    Feature enabled!
+</h2>
 }
 
 <h1>All Time Highscore Hall of Fame</h1>
@@ -13,3 +23,10 @@
         <div class="enjoy-css">@score.Game:  @score.Points - @score.Nickname</div>
     }
 </div>
+
+<feature name="@AppFeatureFlags.LeaderboardListLimit">
+    <h2>Same feature as above!</h2>
+</feature>
+<feature name="@AppFeatureFlags.LeaderboardListLimit" negate="true">
+    <h2></h2>Present when new feature is not enabled</h2>
+</feature>

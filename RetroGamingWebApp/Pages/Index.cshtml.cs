@@ -16,17 +16,20 @@ namespace RetroGamingWebApp.Pages
     {
         private readonly ILogger<IndexModel> logger;
         private readonly IOptionsSnapshot<LeaderboardApiOptions> options;
-        private readonly IFeatureManager featureManager;
+        private readonly IOptionsSnapshot<Settings> settings;
+        private readonly IFeatureManagerSnapshot featureManager;
         private readonly ILeaderboardClient proxy;
 
         public IndexModel(ILoggerFactory loggerFactory, ILeaderboardClient proxy, 
             IOptionsSnapshot<LeaderboardApiOptions> options, 
-            IFeatureManager featureManager)
+            IOptionsSnapshot<Settings> settings,
+            IFeatureManagerSnapshot featureManager)
         {
             this.logger = loggerFactory.CreateLogger<IndexModel>();
             this.options = options;
+            this.settings = settings;
             this.featureManager = featureManager;
-            this.proxy = proxy; 
+            this.proxy = proxy;
         }
 
         public IEnumerable<HighScore> Scores { get; private set; }
@@ -37,7 +40,7 @@ namespace RetroGamingWebApp.Pages
             try
             {
                 //ILeaderboardClient proxy = RestService.For<ILeaderboardClient>(options.Value.BaseUrl);
-                if (featureManager.IsEnabled(nameof(AppFeatureFlags.LeaderboardListLimit)))
+                if (await featureManager.IsEnabledAsync(nameof(AppFeatureFlags.LeaderboardListLimit)))
                 {
                     int limit;
                     Scores = await proxy.GetHighScores(Int32.TryParse(Request.Query["limit"], out limit) ? limit : 5)

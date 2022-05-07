@@ -1,6 +1,6 @@
 ﻿namespace RetroGamingWebApp
 {
-    internal class Settings
+    public class Settings
     {
         public string AppName { get; set; }
         public double Version { get; set; }

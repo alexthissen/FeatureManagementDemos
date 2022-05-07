@@ -14,4 +14,3 @@ services:
       dockerfile: RetroGamingWebApp/Dockerfile
     depends_on:
       - "leaderboardwebapi"
-

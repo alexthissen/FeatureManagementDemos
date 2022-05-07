@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NSwag.Annotations;
+//using NSwag.Annotations;
 
 namespace LeaderboardWebApi.Controllers
 {
-    [OpenApiIgnore]
+    //[OpenApiIgnore]
     public class HomeController : Controller
     {
         public IActionResult Index()

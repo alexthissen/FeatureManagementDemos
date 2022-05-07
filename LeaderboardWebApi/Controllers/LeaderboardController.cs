@@ -7,24 +7,24 @@ using LeaderboardWebApi.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NSwag.Annotations;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
 
 namespace LeaderboardWebApi.Controllers
 {
-    public class HighScore
+    public record struct HighScore
     {
         public string Game { get; set; }
         public string Nickname { get; set; }
         public int Points { get; set; }
     }
 
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    //[ApiVersion("1.0")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v1.0/[controller]")]
     [Produces("application/xml", "application/json")]
-    [OpenApiTag("Leaderboard", Description = "New operations that should be only visible for version 3")]
-    [ApiExplorerSettings(IgnoreApi = false, GroupName = nameof(LeaderboardController))]
+    //[OpenApiTag("Leaderboard", Description = "New operations that should be only visible for version 3")]
+    //[ApiExplorerSettings(IgnoreApi = false, GroupName = nameof(LeaderboardController))]
     public class LeaderboardController : Controller
     {
         private readonly LeaderboardContext context;
@@ -59,7 +59,8 @@ namespace LeaderboardWebApi.Controllers
                     Nickname = score.Gamer.Nickname
                 });
 
-            if (featureManager.IsEnabled(nameof(ApiFeatureFlags.LeaderboardListLimit)))
+            if (await featureManager.IsEnabledAsync("Test"))
+            //if (await featureManager.IsEnabledAsync(nameof(ApiFeatureFlags.LeaderboardListLimit)))
             {
                 int searchLimit = limit;
 

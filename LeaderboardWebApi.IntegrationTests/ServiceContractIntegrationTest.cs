@@ -26,7 +26,7 @@ namespace LeaderboardWebApi.IntegrationTests
 
             var builder = new WebHostBuilder()
                 .UseConfiguration(configuration)
-                .UseStartup(typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
+                //.UseStartup(typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
                 .UseEnvironment("IntegrationTest")
                 .ConfigureTestServices(services =>
                 {
@@ -41,7 +41,7 @@ namespace LeaderboardWebApi.IntegrationTests
         public async Task GetReturns200OK()
         {
             // Act
-            var response = await httpClient.GetAsync("/api/v1/leaderboard");
+            var response = await httpClient.GetAsync("/api/v1.0/leaderboard");
 
             // Assert
             response.EnsureSuccessStatusCode();

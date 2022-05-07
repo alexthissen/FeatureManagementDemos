@@ -5,7 +5,7 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>ec06d7a8-72b3-42b0-94f0-40677a8bf296</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/api/v1/Leaderboard</DockerServiceUrl>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/api/v1.0/Leaderboard</DockerServiceUrl>
     <DockerServiceName>leaderboardwebapi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
