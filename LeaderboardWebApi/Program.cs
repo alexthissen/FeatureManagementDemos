@@ -128,8 +128,13 @@ if (app.Environment.IsDevelopment())
         scope.ServiceProvider.GetRequiredService<LeaderboardContext>().Database.EnsureCreated();
     }
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "LeaderboardWebAPI v1"));
+    app.UseSwagger(options => {
+        options.RouteTemplate = "openapi/{documentName}/openapi.json";
+    });
+    app.UseSwaggerUI(c =>{
+        c.SwaggerEndpoint("/openapi/v1.0/openapi.json", "LeaderboardWebAPI v1.0");
+        c.RoutePrefix = "openapi";
+    });
 }
 
 app.UseHealthChecks("/health");
