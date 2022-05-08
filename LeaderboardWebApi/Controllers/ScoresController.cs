@@ -13,6 +13,7 @@ namespace LeaderboardWebApi.Controllers
 {
     //[ApiVersion("1.0")]
     //[Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
     [Route("api/v1.0/[controller]")]
     [Produces("application/xml", "application/json")]
     //[OpenApiTag("Scores", Description = "Scores API")]

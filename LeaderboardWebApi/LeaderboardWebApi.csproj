@@ -5,6 +5,8 @@
 		<UserSecretsId>16b2fefd-2aa1-4d7a-98d0-9de3c283e45b</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,6 +27,9 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0-beta1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
 	</ItemGroup>
 
 </Project>

@@ -1,21 +1,15 @@
 using HealthChecks.UI.Client;
 using LeaderboardWebApi.Infrastructure;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.FeatureFilters;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using System;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
@@ -42,25 +36,29 @@ builder.Services.AddControllers(options => {
 .AddControllersAsServices(); // For resolving controllers as services via DI
 
 string connection = builder.Configuration.GetConnectionString("AppConfig");
-builder.Configuration.AddAzureAppConfiguration(options =>
+if (!String.IsNullOrEmpty(connection))
 {
-    options.ConfigureRefresh(refresh =>
+    builder.Configuration.AddAzureAppConfiguration(options =>
     {
-        refresh.Register("LeaderboardWebApp:Settings:Sentinel", refreshAll: true)
-            .SetCacheExpiration(new TimeSpan(0, 1, 0));
+        options.ConfigureRefresh(refresh =>
+        {
+            refresh.Register("LeaderboardWebApp:Settings:Sentinel", refreshAll: true)
+                .SetCacheExpiration(new TimeSpan(0, 1, 0));
+        });
+        options.Connect(connection);
+        options.Select(KeyFilter.Any);
+        options.UseFeatureFlags(feature =>
+        {
+            feature.CacheExpirationInterval = TimeSpan.FromSeconds(30);
+            feature.Label = builder.Environment.EnvironmentName;
+        });
     });
-    options.Connect(connection);
-    options.Select(KeyFilter.Any);
-    options.UseFeatureFlags(feature =>
-    {
-        feature.CacheExpirationInterval = TimeSpan.FromSeconds(30);
-        feature.Label = builder.Environment.EnvironmentName;
-    });
-});
-// Required for refresh
-builder.Services.AddAzureAppConfiguration();
+    // Required for refresh
+    builder.Services.AddAzureAppConfiguration();
+}
 
-builder.Services.AddFeatureManagement();
+builder.Services.AddFeatureManagement()
+    .AddFeatureFilter<PercentageFilter>();
 
 //builder.Services.AddApiVersioning(options =>
 //{
@@ -140,7 +138,12 @@ if (app.Environment.IsDevelopment())
 app.UseHealthChecks("/health");
 
 // Use Azure App Configuration to allow requests to trigger refresh of the configuration
-app.UseAzureAppConfiguration();
+//app.UseAzureAppConfiguration();
+
+app.MapGet("/api/leaderboard", () => StatusCodes.Status200OK)
+    .WithDescription("Gets all highscores")
+    .WithName("GetScores")
+    .AllowAnonymous();
 
 app.MapHealthChecks("/health/ready",
     new HealthCheckOptions()

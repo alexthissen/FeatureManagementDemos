@@ -21,6 +21,7 @@ namespace LeaderboardWebApi.Controllers
 
     //[ApiVersion("1.0")]
     //[Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
     [Route("api/v1.0/[controller]")]
     [Produces("application/xml", "application/json")]
     //[OpenApiTag("Leaderboard", Description = "New operations that should be only visible for version 3")]
@@ -45,7 +46,7 @@ namespace LeaderboardWebApi.Controllers
         /// </summary>
         /// <returns>List of high scores per game.</returns>
         /// <response code="200">The list was successfully retrieved.</response>
-        [HttpGet]
+        [HttpGet(Name = "GetLeaderboard")]
         [ProducesResponseType(typeof(IEnumerable<HighScore>), 200)]
         public async Task<ActionResult<IEnumerable<HighScore>>> Get(int limit = 0)
         {
@@ -59,8 +60,7 @@ namespace LeaderboardWebApi.Controllers
                     Nickname = score.Gamer.Nickname
                 });
 
-            if (await featureManager.IsEnabledAsync("Test"))
-            //if (await featureManager.IsEnabledAsync(nameof(ApiFeatureFlags.LeaderboardListLimit)))
+            if (await featureManager.IsEnabledAsync(nameof(ApiFeatureFlags.LeaderboardListLimit)))
             {
                 int searchLimit = limit;
 
@@ -70,25 +70,36 @@ namespace LeaderboardWebApi.Controllers
                     searchLimit--;
                 }
                 while (searchLimit != 0);
- 
+
                 scores = scores.Take(limit);
             }
 
             return Ok(await scores.ToListAsync().ConfigureAwait(false));
         }
 
-        //[HttpGet("[action]")]
+        [HttpGet("/[action]")]
         //[FeatureGate("Beta")]
-        //public IEnumerable<FeatureValue> Features()
-        //{
-        //    var section = Configuration.GetSection("FeatureManagement");
-        //    return null;
-        //}
+        public async Task<IAsyncEnumerable<string>> Features() => featureManager.GetFeatureNamesAsync();
+
+        [HttpGet("/[action]")]
+        //[FeatureGate("Beta")]
+        public async Task<IEnumerable<FeatureValue>> FeaturesWithValues()
+        {
+            IAsyncEnumerable<string> names = featureManager.GetFeatureNamesAsync();
+            var results = new List<FeatureValue>();
+            await foreach (var name in names
+                .WithCancellation(default(CancellationToken))
+                .ConfigureAwait(false))
+            {
+                results.Add(new() { Name = name, Value = await featureManager.IsEnabledAsync(name) });
+            }
+            return results;
+        }
     }
 
     public class FeatureValue
     {
         public string Name { get; set; }
-        public string Value { get; set; }
+        public bool Value { get; set; }
     }
 }

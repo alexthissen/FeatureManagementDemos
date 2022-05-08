@@ -1,11 +1,11 @@
+using LeaderboardWebApi.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace LeaderboardWebApi.IntegrationTests
@@ -13,40 +13,74 @@ namespace LeaderboardWebApi.IntegrationTests
     [TestClass]
     public class ServiceContractIntegrationTest
     {
-        TestServer testServer;
-        HttpClient httpClient;
-
-        [TestInitialize]
-        public void Initialize()
+        //[TestInitialize]
+        public async Task Initialize()
         {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            var builder = new WebHostBuilder()
-                .UseConfiguration(configuration)
-                //.UseStartup(typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
-                .UseEnvironment("IntegrationTest")
-                .ConfigureTestServices(services =>
+            var factory = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder =>
                 {
+                    builder.ConfigureServices((context, services) =>
+                    {
+                        var root = new InMemoryDatabaseRoot();
+                        services.AddScoped(provider =>
+                        {
+                            // Replace SQL Server with in-memory provider
+                            return new DbContextOptionsBuilder<LeaderboardContext>()
+                                .UseInMemoryDatabase("HighScores", root)
+                                .UseApplicationServiceProvider(provider)
+                                .Options;
+                        });
+                    });
                 });
 
-            // Create test stack
-            testServer = new TestServer(builder);
-            httpClient = testServer.CreateClient();
+            // Create direct in-memory HTTP client
+            var httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions() { });
         }
 
         [TestMethod]
         public async Task GetReturns200OK()
         {
-            // Act
-            var response = await httpClient.GetAsync("/api/v1.0/leaderboard");
+            await using var factory = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureServices((context, services) =>
+                    {
+                        var root = new InMemoryDatabaseRoot();
+                        services.AddScoped(provider =>
+                        {
+                            // Replace SQL Server with in-memory provider
+                            return new DbContextOptionsBuilder<LeaderboardContext>()
+                                .UseInMemoryDatabase("HighScores", root)
+                                .UseApplicationServiceProvider(provider)
+                                .Options;
+                        });
+                    });
+                });
 
-            // Assert
+            // Create direct in-memory HTTP client
+            HttpClient httpClient = factory.CreateClient(); // new WebApplicationFactoryClientOptions() { BaseAddress = new System.Uri("https://localhost") });
+
+            // Act
+            var response = await httpClient.GetAsync("Leaderboard");
+
+            // Assert 
             response.EnsureSuccessStatusCode();
             string responseHtml = await response.Content.ReadAsStringAsync();
             Assert.IsTrue(responseHtml.Contains("1337"));
+        }
+
+        [TestMethod]
+        public async Task TestMethod1()
+        {
+            await using var application = new WebApplicationFactory<Program>();
+
+            // Create direct in-memory HTTP client
+            HttpClient client = application.CreateClient(new WebApplicationFactoryClientOptions() { });
+            var response = await client.GetAsync("/weatherforecast");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsNotNull(response);
         }
     }
 }
