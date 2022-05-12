@@ -11,7 +11,13 @@ using Microsoft.FeatureManagement.FeatureFilters;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder();
+string[] arguments = new[] {
+    "--environment=Development",
+    "--contentRoot=C:\\Sources\\GitHub\\alexthissen\\FeatureManagement\\LeaderboardWebApi",
+    "--applicationName=LeaderboardWebApi"
+};
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<LeaderboardContext>(options =>
 {
@@ -26,7 +32,6 @@ builder.Services.AddDbContext<LeaderboardContext>(options =>
     });
 });
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 builder.Services.AddControllers(options => {
     //options.Filters.AddForFeature<ThirdPartyActionFilter>(nameof(ApiFeatureFlags.EnhancedPipeline))
 })
@@ -36,6 +41,8 @@ builder.Services.AddControllers(options => {
 .AddControllersAsServices(); // For resolving controllers as services via DI
 
 string connection = builder.Configuration.GetConnectionString("AppConfig");
+//string connection = "Endpoint=https://leaderboardappconfiguration.azconfig.io;Id=lI40-l9-s0:JAonwXzmf14KYUGe8ij3;Secret=zAm8xgixIBfpZu5FNMjC0sypB4gG8DGpV7xwo72laZo="; //builder.Configuration.GetConnectionString("AppConfig");
+
 if (!String.IsNullOrEmpty(connection))
 {
     builder.Configuration.AddAzureAppConfiguration(options =>
@@ -69,6 +76,7 @@ builder.Services.AddFeatureManagement()
 //});
 
 string key = builder.Configuration["ApplicationInsights:InstrumentationKey"];
+//string key = "3f764dc0-1b9e-41b5-9b26-25a5e4f47a2d";
 
 IHealthChecksBuilder health = builder.Services.AddHealthChecks();
 health.AddApplicationInsightsPublisher(key);
@@ -138,12 +146,7 @@ if (app.Environment.IsDevelopment())
 app.UseHealthChecks("/health");
 
 // Use Azure App Configuration to allow requests to trigger refresh of the configuration
-//app.UseAzureAppConfiguration();
-
-app.MapGet("/api/leaderboard", () => StatusCodes.Status200OK)
-    .WithDescription("Gets all highscores")
-    .WithName("GetScores")
-    .AllowAnonymous();
+if (!String.IsNullOrEmpty(connection)) app.UseAzureAppConfiguration();
 
 app.MapHealthChecks("/health/ready",
     new HealthCheckOptions()
@@ -160,6 +163,8 @@ app.MapHealthChecks("/health/lively",
     })
     .RequireHost($"*:{app.Configuration["ManagementPort"]}");
 
+//app.UseHttpsRedirection();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

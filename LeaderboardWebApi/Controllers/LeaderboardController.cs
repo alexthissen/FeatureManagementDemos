@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LeaderboardWebApi.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using LeaderboardWebApi.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
 
@@ -24,15 +18,13 @@ namespace LeaderboardWebApi.Controllers
     [ApiController]
     [Route("api/v1.0/[controller]")]
     [Produces("application/xml", "application/json")]
-    //[OpenApiTag("Leaderboard", Description = "New operations that should be only visible for version 3")]
-    //[ApiExplorerSettings(IgnoreApi = false, GroupName = nameof(LeaderboardController))]
-    public class LeaderboardController : Controller
+    public class LeaderboardController : ControllerBase
     {
         private readonly LeaderboardContext context;
         private readonly IFeatureManager featureManager;
         private readonly ILogger<LeaderboardController> logger;
 
-        public LeaderboardController(LeaderboardContext context, IFeatureManager featureManager,
+        public LeaderboardController(LeaderboardContext context, IFeatureManager featureManager, IConfiguration config,
             ILoggerFactory loggerFactory = null)
         {
             this.context = context;
@@ -65,11 +57,11 @@ namespace LeaderboardWebApi.Controllers
                 int searchLimit = limit;
 
                 // This is a demo bug, supposedly "hard" to find
-                do
-                {
-                    searchLimit--;
-                }
-                while (searchLimit != 0);
+                //do
+                //{
+                //    searchLimit--;
+                //}
+                //while (searchLimit != 0);
 
                 scores = scores.Take(limit);
             }
@@ -78,28 +70,23 @@ namespace LeaderboardWebApi.Controllers
         }
 
         [HttpGet("/[action]")]
-        //[FeatureGate("Beta")]
+        [FeatureGate("Beta")]
         public async Task<IAsyncEnumerable<string>> Features() => featureManager.GetFeatureNamesAsync();
 
+        // Require both feature flags to be enabled
+        [FeatureGate(RequirementType.All, "Beta", "Alpha")]
         [HttpGet("/[action]")]
-        //[FeatureGate("Beta")]
-        public async Task<IEnumerable<FeatureValue>> FeaturesWithValues()
+        public async Task<Dictionary<string, bool>> FeaturesWithValues()
         {
             IAsyncEnumerable<string> names = featureManager.GetFeatureNamesAsync();
-            var results = new List<FeatureValue>();
+            var results = new Dictionary<string, bool>();
             await foreach (var name in names
                 .WithCancellation(default(CancellationToken))
                 .ConfigureAwait(false))
             {
-                results.Add(new() { Name = name, Value = await featureManager.IsEnabledAsync(name) });
+                results.Add(name, await featureManager.IsEnabledAsync(name));
             }
             return results;
         }
-    }
-
-    public class FeatureValue
-    {
-        public string Name { get; set; }
-        public bool Value { get; set; }
     }
 }

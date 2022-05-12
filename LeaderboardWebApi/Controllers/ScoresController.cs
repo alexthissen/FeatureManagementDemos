@@ -16,8 +16,7 @@ namespace LeaderboardWebApi.Controllers
     [ApiController]
     [Route("api/v1.0/[controller]")]
     [Produces("application/xml", "application/json")]
-    //[OpenApiTag("Scores", Description = "Scores API")]
-    public class ScoresController : Controller
+    public class ScoresController : ControllerBase
     {
         private readonly LeaderboardContext context;
 

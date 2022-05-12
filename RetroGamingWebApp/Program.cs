@@ -21,23 +21,23 @@ using RetroGamingWebApp.Proxy;
 WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
 string connection = builder.Configuration.GetConnectionString("AppConfig");
-//builder.Configuration.AddAzureAppConfiguration(options =>
-//{
-//    options.ConfigureRefresh(refresh =>
-//    {
-//        refresh.Register("LeaderboardWebApp:Settings:Sentinel", refreshAll: true)
-//            .SetCacheExpiration(new TimeSpan(0, 1, 0));
-//    });
-//    options.Connect(connection);
-//    options.Select(KeyFilter.Any);
-//    options.UseFeatureFlags(feature =>
-//    {
-//        feature.CacheExpirationInterval = TimeSpan.FromSeconds(30);
-//        feature.Label = builder.Environment.EnvironmentName;
-//    });
-//});
-//// Required for refresh
-//builder.Services.AddAzureAppConfiguration();
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    options.ConfigureRefresh(refresh =>
+    {
+        refresh.Register("LeaderboardWebApp:Settings:Sentinel", refreshAll: true)
+            .SetCacheExpiration(new TimeSpan(0, 1, 0));
+    });
+    options.Connect(connection);
+    options.Select(KeyFilter.Any);
+    options.UseFeatureFlags(feature =>
+    {
+        feature.CacheExpirationInterval = TimeSpan.FromSeconds(30);
+        feature.Label = builder.Environment.EnvironmentName;
+    });
+});
+// Required for refresh
+builder.Services.AddAzureAppConfiguration();
 
 builder.Services.Configure<LeaderboardApiOptions>(builder.Configuration.GetSection("LeaderboardApiOptions"));
 builder.Services.Configure<CookiePolicyOptions>(options =>
