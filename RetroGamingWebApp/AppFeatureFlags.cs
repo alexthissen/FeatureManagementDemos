@@ -2,6 +2,7 @@
 {
     public enum AppFeatureFlags
     {
+        Alpha,
         Beta,
         LeaderboardListLimit
     }

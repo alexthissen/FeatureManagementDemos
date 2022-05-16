@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace RetroGamingWebApp.Proxy
 {
-    [Headers("User-Agent: Leaderboard WebAPI Client 1.0")]
+    [Headers(
+        "User-Agent: Leaderboard WebAPI Client 1.0", 
+        "Proxy-Version: 1"
+    )]
     public interface ILeaderboardClient
     {
         [Get("/api/v1.0/leaderboard")]
