@@ -39,6 +39,7 @@ stages:
         azureContainerRegistry: '{"loginServer":"featuremanagement.azurecr.io", "id" : "/subscriptions/ad184f13-1651-4b33-98bc-35ee7e41deec/resourceGroups/FeatureManagementShowcase/providers/Microsoft.ContainerRegistry/registries/featuremanagement"}'
         dockerComposeFile: '**/docker-compose.yml'
         action: 'Push services'
+        additionalImageTags: '$(imageTag)'
 - stage: deploy
   displayName: 'Deploy to EarlyAdopters'
   jobs:
