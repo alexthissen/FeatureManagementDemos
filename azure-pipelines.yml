@@ -12,6 +12,22 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+stages:
+- stage: build
+  displayName: 'Build assemblies'
+  jobs:
+  - job: ContinuousIntegrationBuild
+    displayName: 'Build on merge'
+    steps:
+    - task: DockerCompose@0
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscription: 'Microsoft Azure Sponsorship(ad184f13-1651-4b33-98bc-35ee7e41deec)'
+        azureContainerRegistry: '{"loginServer":"featuremanagement.azurecr.io", "id" : "/subscriptions/ad184f13-1651-4b33-98bc-35ee7e41deec/resourceGroups/FeatureManagementShowcase/providers/Microsoft.ContainerRegistry/registries/featuremanagement"}'
+        dockerComposeFile: '**/docker-compose.yml'
+        action: 'Build services'
+    - task: KubernetesManifest@0
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'EarlyAdopters-RetroGamingCluster-earlyadopters-1652807854252'
+        namespace: 'EarlyAdopters'
