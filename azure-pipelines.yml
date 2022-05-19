@@ -49,3 +49,8 @@ stages:
         action: 'deploy'
         kubernetesServiceConnection: 'EarlyAdopters-RetroGamingCluster-earlyadopters-1652807854252'
         namespace: 'EarlyAdopters'
+        manifests: '**/gamingwebapp.k8s-dep.yaml'
+        containers: |
+          featuremanagement.azurecr.io/leaderboardwebapi:$(imageTag)
+          featuremanagement.azurecr.io/retrogamingwebapp:$(imageTag)
+        imagePullSecrets: 'pullkey'
