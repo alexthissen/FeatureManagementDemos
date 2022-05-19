@@ -29,9 +29,6 @@ stages:
         action: 'Build services'
         additionalImageTags: $(imageTag)
         buildImages: true
-  - job: PushContainerImages
-    displayName: 'Push container images to registry'
-    steps:
     - task: DockerCompose@0
       inputs:
         containerregistrytype: 'Azure Container Registry'
