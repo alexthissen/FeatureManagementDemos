@@ -1,10 +1,10 @@
 ﻿using Microsoft.ApplicationInsights.Extensibility;
 
-namespace RetroGamingWebApp.Extensions
+namespace RetroGamingWebApp.Instrumentation
 {
-    public static class WebApplicationBuilderExtensions
+    public static class InstrumentationExtensions
     {
-        public static WebApplicationBuilder AddMonitoring(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddInstrumentation(this WebApplicationBuilder builder)
         {
             builder.Services.AddSingleton<ITelemetryInitializer, ServiceNameInitializer>();
             builder.Services.AddApplicationInsightsTelemetry(options =>

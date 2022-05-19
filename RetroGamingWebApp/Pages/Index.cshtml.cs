@@ -8,12 +8,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Polly.Timeout;
+using RetroGamingWebApp.Features;
 using RetroGamingWebApp.Proxy;
 
 namespace RetroGamingWebApp.Pages
 {
     public class IndexModel : PageModel
     {
+        private const int DefaultLeaderboardSize = 10;
+
         private readonly ILogger<IndexModel> logger;
         private readonly IOptionsSnapshot<LeaderboardApiOptions> options;
         private readonly IOptionsSnapshot<Settings> settings;
@@ -33,17 +36,18 @@ namespace RetroGamingWebApp.Pages
         }
 
         public IEnumerable<HighScore> Scores { get; private set; }
+        public int LeaderboardSize { get; private set; }
 
         public async Task OnGetAsync()
         {
             Scores = new List<HighScore>();
             try
             {
-                //ILeaderboardClient proxy = RestService.For<ILeaderboardClient>(options.Value.BaseUrl);
-                if (await featureManager.IsEnabledAsync(nameof(AppFeatureFlags.LeaderboardListLimit)))
+                if (await featureManager.IsEnabledAsync(nameof(AppFeatureFlags.LeaderboardSize)))
                 {
-                    int limit;
-                    Scores = await proxy.GetHighScores(Int32.TryParse(Request.Query["limit"], out limit) ? limit : 5)
+                    LeaderboardSize = Int32.TryParse(Request.Query["size"], out var size) && size < 20
+                        ? size : DefaultLeaderboardSize;
+                    Scores = await proxy.GetHighScores(LeaderboardSize)
                         .ConfigureAwait(false);
                 }
                 else

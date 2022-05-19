@@ -20,30 +20,6 @@ namespace LeaderboardWebApi.IntegrationTests
     [TestClass]
     public class ServiceContractIntegrationTest
     {
-        ////[TestInitialize]
-        //public async Task Initialize()
-        //{
-        //    var factory = new WebApplicationFactory<Program>()
-        //        .WithWebHostBuilder(builder =>
-        //        {
-        //            builder.ConfigureServices((context, services) =>
-        //            {
-        //                var root = new InMemoryDatabaseRoot();
-        //                services.AddScoped(provider =>
-        //                {
-        //                    // Replace SQL Server with in-memory provider
-        //                    return new DbContextOptionsBuilder<LeaderboardContext>()
-        //                        .UseInMemoryDatabase("HighScores", root)
-        //                        .UseApplicationServiceProvider(provider)
-        //                        .Options;
-        //                });
-        //            });
-        //        });
-
-        //    // Create direct in-memory HTTP client
-        //    var httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions() { });
-        //}
-
         [DataTestMethod]
         [DataRow("Ring0", "api/v1.0/Leaderboard?limit=1", 1)]
         [DataRow("Ring1", "api/v1.0/Leaderboard", 2)]
@@ -74,7 +50,7 @@ namespace LeaderboardWebApi.IntegrationTests
                 });
 
             // Create direct in-memory HTTP client
-            HttpClient httpClient = factory.CreateClient(); // new WebApplicationFactoryClientOptions() { BaseAddress = new System.Uri("https://localhost") });
+            HttpClient httpClient = factory.CreateClient(); 
 
             // Act
             var response = await httpClient.GetAsync(url);

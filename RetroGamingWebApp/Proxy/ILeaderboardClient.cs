@@ -16,7 +16,7 @@ namespace RetroGamingWebApp.Proxy
         Task<IEnumerable<HighScore>> GetHighScores(int limit = 0);
     }
 
-    public class HighScore
+    public record struct HighScore
     {
         public string Game { get; set; }
         public string Nickname { get; set; }

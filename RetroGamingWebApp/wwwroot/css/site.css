@@ -96,7 +96,7 @@ body {
 }
 
 .enjoy-css {
-    display: inline-block;
+    display: block;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;

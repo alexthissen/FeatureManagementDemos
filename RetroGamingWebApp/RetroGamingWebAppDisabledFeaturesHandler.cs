@@ -8,18 +8,16 @@ using System.Threading.Tasks;
 
 namespace RetroGamingWebApp
 {
-    public class FeatureNotEnabledDisabledHandler : IDisabledFeaturesHandler
+    public class RetroGamingWebAppDisabledFeaturesHandler : IDisabledFeaturesHandler
     {
         public Task HandleDisabledFeatures(IEnumerable<string> features, ActionExecutingContext context)
         {
-            var result = new ViewResult()
+            context.Result = new ContentResult
             {
-                ViewName = "Views/Shared/FeatureNotEnabled.cshtml",
-                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                ContentType = "text/plain",
+                Content = "Unavailable feature. Please try again later - " + String.Join(',', features),
+                StatusCode = StatusCodes.Status404NotFound
             };
-
-            result.ViewData["FeatureName"] = string.Join(", ", features);
-            context.Result = result;
             return Task.CompletedTask;
         }
     }

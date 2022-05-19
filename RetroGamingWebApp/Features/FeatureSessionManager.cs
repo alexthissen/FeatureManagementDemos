@@ -1,6 +1,6 @@
 ﻿using Microsoft.FeatureManagement;
 
-namespace RetroGamingWebApp.Extensions
+namespace RetroGamingWebApp.Features
 {
     public class FeatureSessionManager : ISessionManager
     {

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
+using Polly.CircuitBreaker;
+using Polly.Registry;
 
 namespace LeaderboardWebApi.Controllers
 {
@@ -13,8 +15,6 @@ namespace LeaderboardWebApi.Controllers
         public int Points { get; set; }
     }
 
-    //[ApiVersion("1.0")]
-    //[Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Route("api/v1.0/[controller]")]
     [Produces("application/xml", "application/json")]
@@ -22,13 +22,16 @@ namespace LeaderboardWebApi.Controllers
     {
         private readonly LeaderboardContext context;
         private readonly IFeatureManager featureManager;
+        private readonly IHostEnvironment environment;
         private readonly ILogger<LeaderboardController> logger;
 
         public LeaderboardController(LeaderboardContext context, IFeatureManager featureManager, IConfiguration config,
+            IHostEnvironment environment,
             ILoggerFactory loggerFactory = null)
         {
             this.context = context;
             this.featureManager = featureManager;
+            this.environment = environment;
             this.logger = loggerFactory?.CreateLogger<LeaderboardController>();
         }
 
@@ -52,16 +55,18 @@ namespace LeaderboardWebApi.Controllers
                     Nickname = score.Gamer.Nickname
                 });
 
+            // Evaluate feature flag
             if (await featureManager.IsEnabledAsync(nameof(ApiFeatureFlags.LeaderboardListLimit)))
             {
+                // New functionality inside if statement
                 int searchLimit = limit;
 
-                // This is a demo bug, supposedly "hard" to find
-                //do
-                //{
-                //    searchLimit--;
-                //}
-                //while (searchLimit != 0);
+                // This is a demo bug, supposedly "hard" to spot
+                do
+                {
+                    searchLimit--;
+                }
+                while (searchLimit != 0);
 
                 scores = scores.Take(limit);
             }
@@ -70,7 +75,7 @@ namespace LeaderboardWebApi.Controllers
         }
 
         [HttpGet("/[action]")]
-        [FeatureGate("Beta")]
+        [FeatureGate("Alpha")]
         public async Task<IAsyncEnumerable<string>> Features() => featureManager.GetFeatureNamesAsync();
 
         // Require both feature flags to be enabled

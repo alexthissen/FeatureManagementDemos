@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RetroGamingWebApp
+namespace RetroGamingWebApp.Proxy
 {
     public class LeaderboardApiOptions
     {

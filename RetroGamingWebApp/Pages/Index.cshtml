@@ -1,5 +1,6 @@
 ﻿@page
 @using RetroGamingWebApp.Proxy
+@using RetroGamingWebApp.Features
 @model IndexModel
 @addTagHelper *, Microsoft.FeatureManagement.AspNetCore
 @inject ILeaderboardClient proxy
@@ -8,25 +9,22 @@
 }
 @inject Microsoft.FeatureManagement.IFeatureManagerSnapshot featureManager
 
-
-@if (await featureManager.IsEnabledAsync("LeaderboardListLimit"))
+<h1>All Time Highscore Hall of Fame</h1>
+@if (await featureManager.IsEnabledAsync(nameof(AppFeatureFlags.LeaderboardSize)))
 {
-<h2>
-    Feature enabled!
-</h2>
+    <h3>List limited to @Model.LeaderboardSize items</h3>
 }
 
-<h1>All Time Highscore Hall of Fame</h1>
-<div class="row enjoy-css">
-    @foreach (var score in Model.Scores)
-    {
-        <div class="enjoy-css">@score.Game:  @score.Points - @score.Nickname</div>
-    }
-</div>
-
-<feature name="@AppFeatureFlags.LeaderboardListLimit, @AppFeatureFlags.Alpha" requirement="Any">
-    <h2>Same feature as above!</h2>
+@foreach (var score in Model.Scores)
+{
+<feature name="@AppFeatureFlags.RetroFonts">
+    <div class="enjoy-css">@score.Game: @score.Points -> @score.Nickname</div>
 </feature>
-<feature name="@AppFeatureFlags.LeaderboardListLimit" negate="true">
-    <h2></h2>Present when new feature is not enabled</h2>
+<feature name="@AppFeatureFlags.RetroFonts" negate="true">
+    <div>@score.Game: @score.Nickname - @score.Points</div>
+</feature>
+}
+
+<feature name="@AppFeatureFlags.LeaderboardSize, @AppFeatureFlags.Beta" requirement="All">
+    <h3>Let us know what you think. Sign up for beta!</h3>
 </feature>

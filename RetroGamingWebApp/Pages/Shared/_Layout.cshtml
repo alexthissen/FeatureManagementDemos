@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using RetroGamingWebApp.Features
+@addTagHelper *, Microsoft.FeatureManagement.AspNetCore
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -24,6 +26,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
+<feature name="@AppFeatureFlags.Beta">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Beta signup</a>
+                        </li>
+</feature>
                     </ul>
                 </div>
             </div>
