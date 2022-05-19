@@ -40,6 +40,7 @@ stages:
         dockerComposeFile: '**/docker-compose.yml'
         action: 'Push services'
         additionalImageTags: '$(imageTag)'
+        includeLatestTag: true
 - stage: deploy
   displayName: 'Deploy to EarlyAdopters'
   jobs:
