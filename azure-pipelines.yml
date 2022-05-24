@@ -53,4 +53,3 @@ stages:
         containers: |
           featuremanagement.azurecr.io/leaderboardwebapi:$(imageTag)
           featuremanagement.azurecr.io/retrogamingwebapp:$(imageTag)
-        imagePullSecrets: 'pullkey'
