@@ -38,11 +38,14 @@ spec:
     protocol: TCP
     name: https
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dep-gamingwebapp
 spec:
+  selector:
+    matchLabels:
+      app : gamingwebapp
   replicas: 1
   revisionHistoryLimit: 0
   strategy:
@@ -72,11 +75,14 @@ spec:
           limits:
             cpu: "0.10"
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dep-leaderboardwebapi
 spec:
+  selector:
+    matchLabels:
+      app : leaderboardwebapi
   replicas: 1
   revisionHistoryLimit: 0
   strategy:
