@@ -58,7 +58,7 @@ spec:
       containers:
       - name: gamingwebapp
         terminationMessagePath: "/tmp/gamingwebapp-log"
-        image: featuremanagement.azurecr.io/gamingwebapp
+        image: featuremanagement.azurecr.io/retrogamingwebapp:latest
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: Production
@@ -95,7 +95,7 @@ spec:
       containers:
       - name: leaderboardwebapi
         terminationMessagePath: "/tmp/leaderboardwebapi-log"
-        image: featuremanagement.azurecr.io/leaderboardwebapi
+        image: featuremanagement.azurecr.io/leaderboardwebapi:latest
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
