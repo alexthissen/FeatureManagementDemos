@@ -38,7 +38,7 @@ stages:
         action: 'Push services'
         additionalImageTags: '$(imageTag)'
         includeLatestTag: true
-- stage: deploy
+- stage: deploy-canary
   displayName: 'Deploy to Canary'
   jobs:
   - job: DeployImages
@@ -53,7 +53,7 @@ stages:
         containers: |
           featuremanagement.azurecr.io/leaderboardwebapi:$(imageTag)
           featuremanagement.azurecr.io/retrogamingwebapp:$(imageTag)
-- stage: deploy
+- stage: deploy-earlyadopters
   displayName: 'Deploy to EarlyAdopters'
   jobs:
   - job: DeployImages
