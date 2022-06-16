@@ -47,13 +47,14 @@ namespace LeaderboardWebApi.Infrastructure
             {
                 options.Delay = TimeSpan.FromSeconds(10);
             });
-            builder.Services
-                .AddHealthChecksUI(setup =>
-                {
+            if (builder.Environment.IsDevelopment()) 
+            {
+                builder.Services.AddHealthChecksUI(setup => {
                     setup.AddHealthCheckEndpoint("Leaderboard Web API Health checks", "http://localhost/health");
                     setup.SetEvaluationTimeInSeconds(5);
                 })
                 .AddInMemoryStorage();
+            }
 
             builder.Services.AddSingleton<ITelemetryInitializer, ServiceNameInitializer>();
             builder.Services.AddApplicationInsightsTelemetry(options =>
