@@ -97,31 +97,13 @@ spec:
         terminationMessagePath: "/tmp/leaderboardwebapi-log"
         image: featuremanagement.azurecr.io/leaderboardwebapi:latest
         imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 20
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 20
-          periodSeconds: 10
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: Production
         - name: ASPNETCORE_URLS
           value: http://0.0.0.0:80
         - name: ApplicationInsights__InstrumentationKey
-          value: __aikey__
-        - name: KeyVaultName
-          value: __keyvaulturl__
-        - name: KeyVaultClientSecret
-          value: __keyvaultclientsecret__
-        - name: KeyVaultClientID
-          value: __keyvaultclientid__
+          value: 27be05e3-dcbf-4c2f-83f8-4b73f3eb8496
         ports:
         - containerPort: 80
         - containerPort: 443
