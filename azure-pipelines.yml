@@ -38,7 +38,22 @@ stages:
         action: 'Push services'
         additionalImageTags: '$(imageTag)'
         includeLatestTag: true
-- stage: deploy
+- stage: deploy_canary
+  displayName: 'Deploy to Canary'
+  jobs:
+  - job: DeployImages
+    displayName: 'Deploy container images to Canary cluster'
+    steps:
+    - task: KubernetesManifest@0
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'Canary-RetroGamingCluster-canary-1655402967095'
+        namespace: 'canary'
+        manifests: '**/gamingwebapp.k8s-dep.yaml'
+        containers: |
+          featuremanagement.azurecr.io/leaderboardwebapi:$(imageTag)
+          featuremanagement.azurecr.io/retrogamingwebapp:$(imageTag)
+- stage: deploy_earlyadopters
   displayName: 'Deploy to EarlyAdopters'
   jobs:
   - job: DeployImages
@@ -48,7 +63,22 @@ stages:
       inputs:
         action: 'deploy'
         kubernetesServiceConnection: 'EarlyAdopters-RetroGamingCluster-earlyadopters-1652807854252'
-        namespace: 'EarlyAdopters'
+        namespace: 'earlyadopters'
+        manifests: '**/gamingwebapp.k8s-dep.yaml'
+        containers: |
+          featuremanagement.azurecr.io/leaderboardwebapi:$(imageTag)
+          featuremanagement.azurecr.io/retrogamingwebapp:$(imageTag)
+- stage: deploy_production
+  displayName: 'Deploy to GeneralAvailability'
+  jobs:
+  - job: DeployImages
+    displayName: 'Deploy container images to GeneralAvailability cluster'
+    steps:
+    - task: KubernetesManifest@0
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'GeneralAvailability-RetroGamingCluster-production-1655403025152'
+        namespace: 'production'
         manifests: '**/gamingwebapp.k8s-dep.yaml'
         containers: |
           featuremanagement.azurecr.io/leaderboardwebapi:$(imageTag)
