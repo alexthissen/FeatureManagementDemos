@@ -55,6 +55,10 @@ spec:
       labels:
         app: gamingwebapp
     spec:
+      volumes:
+      - name: secretsettings
+        secret:
+          secretName: secret-appsettings
       containers:
       - name: gamingwebapp
         terminationMessagePath: "/tmp/gamingwebapp-log"
@@ -67,10 +71,16 @@ spec:
         - name: LeaderboardApiOptions__BaseUrl
           value: http://svc-leaderboardwebapi
         - name: ApplicationInsights__InstrumentationKey
-          value: __aikey__
+          value: <your-aikey>
+        - name: ConnectionStrings__AppConfig
+          value: <your-appconfig>
         ports:
         - containerPort: 80
         - containerPort: 443
+        volumeMounts:
+        - name: secretsettings
+          mountPath: /app/secrets
+          readOnly: true
         resources:
           limits:
             cpu: "0.10"
@@ -103,7 +113,9 @@ spec:
         - name: ASPNETCORE_URLS
           value: http://0.0.0.0:80
         - name: ApplicationInsights__InstrumentationKey
-          value: 27be05e3-dcbf-4c2f-83f8-4b73f3eb8496
+          value: <your-aikey>
+        - name: ConnectionStrings__AppConfig
+          value: <your-appconfig>
         ports:
         - containerPort: 80
         - containerPort: 443

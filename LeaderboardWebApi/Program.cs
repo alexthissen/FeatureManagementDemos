@@ -15,6 +15,8 @@ string[] arguments = new[] {
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("secrets/appsettings.secrets.json", optional: true);
+
 builder.Services.AddDbContext<LeaderboardContext>(options =>
 {
     string connectionString =
