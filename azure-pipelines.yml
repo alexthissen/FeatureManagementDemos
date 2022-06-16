@@ -47,7 +47,7 @@ stages:
     - task: KubernetesManifest@0
       inputs:
         action: 'deploy'
-        kubernetesServiceConnection: 'EarlyAdopters-RetroGamingCluster-earlyadopters-1652807854252'
+        kubernetesServiceConnection: 'Canary-RetroGamingCluster-canary-1655402967095'
         namespace: 'canary'
         manifests: '**/gamingwebapp.k8s-dep.yaml'
         containers: |
@@ -77,7 +77,7 @@ stages:
     - task: KubernetesManifest@0
       inputs:
         action: 'deploy'
-        kubernetesServiceConnection: 'EarlyAdopters-RetroGamingCluster-earlyadopters-1652807854252'
+        kubernetesServiceConnection: 'GeneralAvailability-RetroGamingCluster-production-1655403025152'
         namespace: 'production'
         manifests: '**/gamingwebapp.k8s-dep.yaml'
         containers: |
